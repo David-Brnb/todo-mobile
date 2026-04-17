@@ -10,6 +10,7 @@ import { MOCK_TASK_LISTS, TaskList } from "@/types/TaskList";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import InputField from "@/components/InputField/InputFieldC";
 import TaskItemCard from "@/components/TaskItemCard/TaskItemCard";
 import { TaskItemExample } from "@/types/TaskItem";
 
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [textInput, setTextInput] = useState("");
 
   const fetchTaskLists = async (): Promise<TaskList[]> => {
     return new Promise((resolve, reject) => {
@@ -96,6 +98,14 @@ export default function HomeScreen() {
         <Text className="text-lg text-gray-500 mb-5">Due todayyy</Text>
 
         <TaskItemCard item={TaskItemExample} />
+
+        <InputField
+          id="1"
+          placeholder="Add a new task..."
+          value={textInput}
+          enabled={true}
+          onChange={setTextInput}
+        />
 
         <Link href="/storybook" asChild>
           <Text className="text-blue-500 underline mb-5">Go to Storybook</Text>
