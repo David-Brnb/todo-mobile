@@ -10,6 +10,9 @@ import { MOCK_TASK_LISTS, TaskList } from "@/types/TaskList";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import TaskItemCard from "@/components/TaskItemCard/TaskItemCard";
+import { TaskItemExample } from "@/types/TaskItem";
+
 export default function HomeScreen() {
   const [lists, setLists] = useState<TaskList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,6 +94,8 @@ export default function HomeScreen() {
         </Text>
 
         <Text className="text-lg text-gray-500 mb-5">Due todayyy</Text>
+
+        <TaskItemCard item={TaskItemExample} />
 
         <Link href="/storybook" asChild>
           <Text className="text-blue-500 underline mb-5">Go to Storybook</Text>
