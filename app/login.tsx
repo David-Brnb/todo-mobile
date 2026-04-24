@@ -1,5 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,13 +9,22 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { login } from "@/firebase/auth";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = () => {
-    router.replace("/(tabs)");
+  const onSubmit = async () => {
+    try {
+      const token = await login(email, password);
+      if (token) {
+        await AsyncStorage.setItem("authToken", token);
+        router.replace("/(tabs)");
+      }
+    } catch {
+      // do nothing
+    }
   };
 
   return (
