@@ -1,5 +1,3 @@
-import { login } from "@/firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { Link, router } from "expo-router";
 import { useState } from "react";
@@ -13,34 +11,25 @@ import {
   View,
 } from "react-native";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
 
   const onSubmit = async () => {
     try {
-      const token = await login(email, password);
-      if (token) {
-        await AsyncStorage.setItem("authToken", token);
-
-        const meUrl = process.env.EXPO_PUBLIC_ME_URL || "http://localhost:8081/user/me";
-        try {
-          const userRes = await axios.get(meUrl, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          console.log("User data:", userRes.data);
-          await AsyncStorage.setItem("userData", JSON.stringify(userRes.data));
-        } catch (error) {
-          console.log("Error fetching user data:", error);
-          // Si es necesario, puedes manejar el error de la petición /me aquí
-        }
-
-        router.replace("/(tabs)");
-      }
-    } catch {
-      Alert.alert("Error", "Failed to sign in. Please check your credentials.");
+      const registerUrl =
+        process.env.EXPO_PUBLIC_REGISTER_URL || "http://localhost:8081/user";
+      await axios.post(registerUrl, {
+        email,
+        password,
+        fullName,
+      });
+      Alert.alert("Success", "Account created successfully! Please sign in.");
+      router.replace("/login");
+    } catch (error) {
+      console.log("Error registering:", error);
+      Alert.alert("Error", "Failed to create account.");
     }
   };
 
@@ -51,8 +40,22 @@ export default function LoginScreen() {
     >
       <View className="gap-4">
         <View className="gap-1">
-          <Text className="text-3xl font-bold text-typography-950">Hello</Text>
-          <Text className="text-typography-500">Sign in to continue</Text>
+          <Text className="text-3xl font-bold text-typography-950">Create Account</Text>
+          <Text className="text-typography-500">Sign up to get started</Text>
+        </View>
+
+        <View className="gap-2">
+          <Text className="font-semibold text-typography-700">Full Name</Text>
+          <TextInput
+            value={fullName}
+            onChangeText={setFullName}
+            placeholder="John Doe"
+            autoCapitalize="words"
+            textContentType="name"
+            autoComplete="name"
+            className="rounded-xl border border-outline-200 bg-background-0 px-4 py-3 text-typography-950"
+            returnKeyType="next"
+          />
         </View>
 
         <View className="gap-2">
@@ -90,14 +93,14 @@ export default function LoginScreen() {
           onPress={onSubmit}
           className="mt-2 items-center justify-center rounded-xl bg-primary-600 py-3"
         >
-          <Text className="font-bold text-typography-0">Sign in</Text>
+          <Text className="font-bold text-typography-0">Create account</Text>
         </Pressable>
 
         <View className="mt-4 flex-row justify-center">
-          <Text className="text-typography-500">Don't have an account? </Text>
-          <Link href="/register" asChild>
+          <Text className="text-typography-500">Already have an account? </Text>
+          <Link href="/login" asChild>
             <Pressable>
-              <Text className="font-bold text-primary-600">Create one</Text>
+              <Text className="font-bold text-primary-600">Sign in</Text>
             </Pressable>
           </Link>
         </View>

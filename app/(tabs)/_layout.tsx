@@ -44,6 +44,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="delete"
+        options={{
+          title: "Delete",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="trash.fill" color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

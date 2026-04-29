@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, RefreshControl, View } from "react-native";
 
@@ -7,6 +9,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol.ios";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { MOCK_TASK_LISTS, TaskList } from "@/types/TaskList";
+import type { TodoDTO } from "@/types/dtos";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,6 +23,31 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [textInput, setTextInput] = useState("");
+  const [todosFetchStatus, setTodosFetchStatus] = useState(
+    "Todos not fetched yet"
+  );
+
+  const fetchTodosFromBackend = async () => {
+    const todosUrl = process.env.EXPO_PUBLIC_TODOS_URL;
+    if (!todosUrl) {
+      setTodosFetchStatus("Missing EXPO_PUBLIC_TODOS_URL");
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const res = await axios.get<TodoDTO[]>(todosUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log("Backend todos response:", res.data);
+      setTodosFetchStatus(`Fetched ${res.data.length} todos`);
+    } catch (error) {
+      console.log("Error fetching backend todos:", error);
+      setTodosFetchStatus("Failed to fetch todos");
+    }
+  };
 
   const fetchTaskLists = async (): Promise<TaskList[]> => {
     return new Promise((resolve, reject) => {
@@ -56,6 +84,7 @@ export default function HomeScreen() {
     const init = async () => {
       setLoading(true);
       await loadLists();
+      await fetchTodosFromBackend();
       setLoading(false);
     };
 
@@ -145,6 +174,10 @@ export default function HomeScreen() {
           />
         )}
       </Box>
+
+      <View className="absolute bottom-4 left-4 right-4">
+        <Text className="text-xs text-gray-500">{todosFetchStatus}</Text>
+      </View>
     </SafeAreaView>
   );
 }

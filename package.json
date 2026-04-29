@@ -3,14 +3,14 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --port 8082",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "android": "expo start --android --port 8082",
+    "ios": "expo start --ios --port 8082",
+    "web": "expo start --web --port 8082",
     "lint": "expo lint",
     "storybook-generate": "sb-rn-get-stories",
-    "storybook": "yarn storybook-generate && expo start"
+    "storybook": "yarn storybook-generate && expo start --port 8082"
   },
   "dependencies": {
     "@babel/core": "^7.29.0",
@@ -31,6 +31,7 @@
     "@storybook/addon-ondevice-actions": "^10.3.1",
     "@storybook/addon-ondevice-controls": "^10.3.1",
     "@storybook/react-native": "^10.3.1",
+    "axios": "^1.15.2",
     "babel-loader": "^8.4.1",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
